@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiffSite", "DiffSite\DiffSi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiffTextRewrite", "DiffTextRewrite\DiffTextRewrite.csproj", "{86EEA000-1B1D-4E63-AD82-4576D50D1FCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DifferenceEngine", "DifferenceEngine\DifferenceEngine.csproj", "{8AE4897A-EA74-49B1-BA55-D892C27AF9C9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{86EEA000-1B1D-4E63-AD82-4576D50D1FCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86EEA000-1B1D-4E63-AD82-4576D50D1FCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86EEA000-1B1D-4E63-AD82-4576D50D1FCB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8AE4897A-EA74-49B1-BA55-D892C27AF9C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8AE4897A-EA74-49B1-BA55-D892C27AF9C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8AE4897A-EA74-49B1-BA55-D892C27AF9C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8AE4897A-EA74-49B1-BA55-D892C27AF9C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
