@@ -48,7 +48,7 @@ namespace DiffTextRewrite.Controllers
                         case DiffResultSpanStatus.DeleteSource:
                             for (i = 0; i < drs.Length; i++)
                             {
-                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</div><br>");
+                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</div>");
                                 cnt++;
                             }
 
@@ -65,7 +65,7 @@ namespace DiffTextRewrite.Controllers
                         case DiffResultSpanStatus.AddDestination:
                             for (i = 0; i < drs.Length; i++)
                             {
-                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</div><br>");
+                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</div>");
                                 cnt++;
                             }
 
@@ -73,8 +73,8 @@ namespace DiffTextRewrite.Controllers
                         case DiffResultSpanStatus.Replace:
                             for (i = 0; i < drs.Length; i++)
                             {
-                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</div><br>");
-                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</div><br>");
+                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</div>");
+                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</div>");
                                 cnt++;
                             }
 
