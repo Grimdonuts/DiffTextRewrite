@@ -48,7 +48,7 @@ namespace DiffTextRewrite.Controllers
                         case DiffResultSpanStatus.DeleteSource:
                             for (i = 0; i < drs.Length; i++)
                             {
-                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</span>");
+                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</div><br>");
                                 cnt++;
                             }
 
@@ -56,8 +56,8 @@ namespace DiffTextRewrite.Controllers
                         case DiffResultSpanStatus.NoChange:
                             for (i = 0; i < drs.Length; i++)
                             {
-                                diffTextModel.left.Add(((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line);
-                                diffTextModel.right.Add(((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line);
+                                diffTextModel.left.Add(((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "<br>");
+                                diffTextModel.right.Add(((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "<br>");
                                 cnt++;
                             }
 
@@ -65,7 +65,7 @@ namespace DiffTextRewrite.Controllers
                         case DiffResultSpanStatus.AddDestination:
                             for (i = 0; i < drs.Length; i++)
                             {
-                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</span>");
+                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</div><br>");
                                 cnt++;
                             }
 
@@ -73,8 +73,8 @@ namespace DiffTextRewrite.Controllers
                         case DiffResultSpanStatus.Replace:
                             for (i = 0; i < drs.Length; i++)
                             {
-                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</span>");
-                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</span>");
+                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</div><br>");
+                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</div><br>");
                                 cnt++;
                             }
 
