@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<link rel="stylesheet" type="text/css" href="~/css/Diff.css">
+<form id="fileinfo" enctype="multipart/form-data" method="post" name="fileinfo">
+    <label>original</label>
+    <input id="firstFile" type="file" name="left" required />
+    <label>modified</label>
+    <input id="secondFile" type="file" name="right" required />
+</form>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-10">
+        <input type="button" value="Submit" id="postDiff" class="btn btn-default" />
+    </div>
+</div>
+
+
+<div class="content">
+    <div class="left">
+        <div class="inner" id="leftDiff"></div>
+    </div>
+    <div class="right">
+        <div class="inner" id="rightDiff"></div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery-3.4.1.js"></script>
+<script src="~/js/Diff.js"></script>
