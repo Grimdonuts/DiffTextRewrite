@@ -6,13 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="DifferenceEngine\**" />
-    <Content Remove="DifferenceEngine\**" />
-    <EmbeddedResource Remove="DifferenceEngine\**" />
-    <None Remove="DifferenceEngine\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -20,15 +13,6 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="CharData.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Structures.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
 
 </Project>
