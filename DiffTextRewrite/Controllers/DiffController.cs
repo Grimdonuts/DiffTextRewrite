@@ -74,17 +74,20 @@ namespace DiffTextRewrite.Controllers
                             {
                                 if (notHtml)
                                 {
+                                    //No Change
                                     diffTextModel.left.Add(sourceLine + "<br>");
                                     diffTextModel.right.Add(destLine + "<br>");
                                 }
                                 else
                                 {
+                                    //No Change
                                     diffTextModel.left.Add(sourceLine);
                                     diffTextModel.right.Add(destLine);
                                 }
                             }
                             else
                             {
+                                //Replace
                                 diffTextModel.left.Add("<div class=\"deleted\">" + sourceLine + "</div>");
                                 diffTextModel.right.Add("<div class=\"added\">" + destLine + "</div>");
                             }
@@ -94,6 +97,7 @@ namespace DiffTextRewrite.Controllers
                     {
                         if (j > (dLF.Count - 1))
                         {
+                            //Delete
                             diffTextModel.left.Add("<div class=\"deleted\">" + sourceLine + "</div>");
                         }
                     }
@@ -106,6 +110,7 @@ namespace DiffTextRewrite.Controllers
                     {
                         if (j > (sLF.Count - 1))
                         {
+                            //Add
                             diffTextModel.right.Add("<div class=\"added\">" + destLine + "</div>");
                         }
                     }
