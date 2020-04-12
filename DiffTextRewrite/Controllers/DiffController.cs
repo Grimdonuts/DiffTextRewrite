@@ -23,6 +23,11 @@ namespace DiffTextRewrite.Controllers
             diffTextModel.right = new List<string>();
             var file1 = Request.Form.Files[0];
             var file2 = Request.Form.Files[1];
+            var notHtml = true;
+            if (file1.FileName.Contains("html") && file2.FileName.Contains("html"))
+            {
+                notHtml = false;
+            }
 
             var stream1 = new StreamReader(file1.OpenReadStream());
             var stream2 = new StreamReader(file2.OpenReadStream());
@@ -41,6 +46,7 @@ namespace DiffTextRewrite.Controllers
                 lines.Add(line);
             }
             List<string> sLF = lines;
+
             lines = new List<string>();
             while ((line = stream2.ReadLine()) != null)
             {
@@ -66,13 +72,21 @@ namespace DiffTextRewrite.Controllers
                         {
                             if (sourceLine == destLine)
                             {
-                                diffTextModel.left.Add(sourceLine);
-                                diffTextModel.right.Add(destLine);
+                                if (notHtml)
+                                {
+                                    diffTextModel.left.Add(sourceLine + "<br>");
+                                    diffTextModel.right.Add(destLine + "<br>");
+                                }
+                                else
+                                {
+                                    diffTextModel.left.Add(sourceLine);
+                                    diffTextModel.right.Add(destLine);
+                                }
                             }
                             else
                             {
-                                diffTextModel.left.Add("<span class=\"deleted\">" + sourceLine + "</span>");
-                                diffTextModel.right.Add("<span class=\"added\">" + destLine + "</span>");
+                                diffTextModel.left.Add("<div class=\"deleted\">" + sourceLine + "</div>");
+                                diffTextModel.right.Add("<div class=\"added\">" + destLine + "</div>");
                             }
                         }
                     }
@@ -80,7 +94,7 @@ namespace DiffTextRewrite.Controllers
                     {
                         if (j > (dLF.Count - 1))
                         {
-                            diffTextModel.left.Add("<span class=\"deleted\">" + sourceLine + "</span>");
+                            diffTextModel.left.Add("<div class=\"deleted\">" + sourceLine + "</div>");
                         }
                     }
                 }
@@ -92,7 +106,7 @@ namespace DiffTextRewrite.Controllers
                     {
                         if (j > (sLF.Count - 1))
                         {
-                            diffTextModel.right.Add("<span class=\"added\">" + destLine + "</span>");
+                            diffTextModel.right.Add("<div class=\"added\">" + destLine + "</div>");
                         }
                     }
                 }
