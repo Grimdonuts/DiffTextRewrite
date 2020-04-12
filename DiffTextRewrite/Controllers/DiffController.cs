@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DifferenceEngine;
 using DiffTextRewrite.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -28,57 +27,73 @@ namespace DiffTextRewrite.Controllers
             var stream1 = new StreamReader(file1.OpenReadStream());
             var stream2 = new StreamReader(file2.OpenReadStream());
 
-            DiffList_TextFile sLF = null;
-            DiffList_TextFile dLF = null;
+            List<string> lines = new List<string>();
+            String line;
+            int MaxLineLength = 1024;
+            while ((line = stream1.ReadLine()) != null)
+            {
+                if (line.Length > MaxLineLength)
+                {
+                    throw new InvalidOperationException(
+                        string.Format("File contains a line greater than {0} characters.",
+                        MaxLineLength.ToString()));
+                }
+                lines.Add(line);
+            }
+            List<string> sLF = lines;
+            lines = new List<string>();
+            while ((line = stream2.ReadLine()) != null)
+            {
+                if (line.Length > MaxLineLength)
+                {
+                    throw new InvalidOperationException(
+                        string.Format("File contains a line greater than {0} characters.",
+                        MaxLineLength.ToString()));
+                }
+                lines.Add(line);
+            }
+            List<string> dLF = lines;
 
             try
             {
-                sLF = new DiffList_TextFile(stream1);
-                dLF = new DiffList_TextFile(stream2);
-                double time = 0;
-                DiffEngine de = new DiffEngine();
-                time = de.ProcessDiff(sLF, dLF, DiffEngineLevel.SlowPerfect);
-                int cnt = 1;
-                int i;
-                ArrayList rep = de.DiffReport();
-                foreach (DiffResultSpan drs in rep)
+                for (int j = 0; j < sLF.Count; j++)
                 {
-                    switch (drs.Status)
+                    var sourceLine = sLF[j];
+                    for (int k = 0; k < dLF.Count; k++)
                     {
-                        case DiffResultSpanStatus.DeleteSource:
-                            for (i = 0; i < drs.Length; i++)
+                        var destLine = dLF[k];
+                        if (k == j)
+                        {
+                            if (sourceLine == destLine)
                             {
-                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</div>");
-                                cnt++;
+                                diffTextModel.left.Add(sourceLine);
+                                diffTextModel.right.Add(destLine);
                             }
-
-                            break;
-                        case DiffResultSpanStatus.NoChange:
-                            for (i = 0; i < drs.Length; i++)
+                            else
                             {
-                                diffTextModel.left.Add(((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "<br>");
-                                diffTextModel.right.Add(((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "<br>");
-                                cnt++;
+                                diffTextModel.left.Add("<span class=\"deleted\">" + sourceLine + "</span>");
+                                diffTextModel.right.Add("<span class=\"added\">" + destLine + "</span>");
                             }
+                        }
+                    }
+                    if (sLF.Count > dLF.Count)
+                    {
+                        if (j > (dLF.Count - 1))
+                        {
+                            diffTextModel.left.Add("<span class=\"deleted\">" + sourceLine + "</span>");
+                        }
+                    }
+                }
 
-                            break;
-                        case DiffResultSpanStatus.AddDestination:
-                            for (i = 0; i < drs.Length; i++)
-                            {
-                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</div>");
-                                cnt++;
-                            }
-
-                            break;
-                        case DiffResultSpanStatus.Replace:
-                            for (i = 0; i < drs.Length; i++)
-                            {
-                                diffTextModel.left.Add("<div class=\"deleted\">" + ((TextLine)sLF.GetByIndex(drs.SourceIndex + i)).Line + "</div>");
-                                diffTextModel.right.Add("<div class=\"added\">" + ((TextLine)dLF.GetByIndex(drs.DestIndex + i)).Line + "</div>");
-                                cnt++;
-                            }
-
-                            break;
+                for (int j = 0; j < dLF.Count; j++)
+                {
+                    var destLine = dLF[j];
+                    if (sLF.Count < dLF.Count)
+                    {
+                        if (j > (sLF.Count - 1))
+                        {
+                            diffTextModel.right.Add("<span class=\"added\">" + destLine + "</span>");
+                        }
                     }
                 }
             }

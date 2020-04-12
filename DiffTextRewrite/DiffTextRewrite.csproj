@@ -23,19 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="BinaryFile.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="CharData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Engine.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="Structures.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="TextFile.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
