@@ -87,9 +87,59 @@ namespace DiffTextRewrite.Controllers
                             }
                             else
                             {
+                                //Words Logic
+                                List<string> sourceWords = sourceLine.Split(" ").ToList();
+                                List<string> destWords = destLine.Split(" ").ToList();
+                                
+                                for (int l = 0; l < sourceWords.Count; l++)
+                                {
+                                    var sourceWord = sourceWords[l];
+                                    for (int m = 0; m < destWords.Count; m++)
+                                    {
+                                        var destWord = destWords[m];
+                                        if (m == l)
+                                        {
+                                            if (sourceWord != destWord)
+                                            {
+                                                //Replace
+                                                sourceWords[l] = "<span class=\"deleted\">" + sourceWord + "</span>";
+                                                destWords[m] = "<span class=\"added\">" + destWord + "</span>";
+                                            }
+                                        }
+                                    }
+                                    if (sourceWords.Count > destWords.Count)
+                                    {
+                                        if (l > (destWords.Count - 1))
+                                        {
+                                            //Delete
+                                            sourceWords[l] = "<span class=\"deleted\">" + sourceWord + "</span>";
+                                        }
+                                    }
+                                }
+
+                                for (int l = 0; l < destWords.Count; l++)
+                                {
+                                    var destWord = destWords[l];
+                                    if (sourceWords.Count < destWords.Count)
+                                    {
+                                        if (l > (sourceWords.Count - 1))
+                                        {
+                                            //Add
+                                            destWords[l] = "<span class=\"added\">" + destWord + "</span>";
+                                        }
+                                    }
+                                }
                                 //Replace
-                                diffTextModel.left.Add("<div class=\"deleted\">" + sourceLine + "</div>");
-                                diffTextModel.right.Add("<div class=\"added\">" + destLine + "</div>");
+                                if (notHtml)
+                                {
+                                    diffTextModel.left.Add(string.Join(" ", sourceWords) + "<br>");
+                                    diffTextModel.right.Add(string.Join(" ", destWords) + "<br>");
+                                }
+                                else
+                                {
+                                    diffTextModel.left.Add(string.Join(" ", sourceWords));
+                                    diffTextModel.right.Add(string.Join(" ", destWords));
+                                }
                             }
                         }
                     }
@@ -98,7 +148,14 @@ namespace DiffTextRewrite.Controllers
                         if (j > (dLF.Count - 1))
                         {
                             //Delete
-                            diffTextModel.left.Add("<div class=\"deleted\">" + sourceLine + "</div>");
+                            if (notHtml)
+                            {
+                                diffTextModel.left.Add("<span class=\"deleted\">" + sourceLine + "</span><br>");
+                            }
+                            else
+                            {
+                                diffTextModel.left.Add("<span class=\"deleted\">" + sourceLine + "</span>");
+                            }
                         }
                     }
                 }
@@ -111,7 +168,14 @@ namespace DiffTextRewrite.Controllers
                         if (j > (sLF.Count - 1))
                         {
                             //Add
-                            diffTextModel.right.Add("<div class=\"added\">" + destLine + "</div>");
+                            if (notHtml)
+                            {
+                                diffTextModel.right.Add("<span class=\"added\">" + destLine + "</span><br>");
+                            }
+                            else
+                            {
+                                diffTextModel.right.Add("<span class=\"added\">" + destLine + "</span>");
+                            }
                         }
                     }
                 }
