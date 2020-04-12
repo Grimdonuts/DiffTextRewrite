@@ -1,6 +1,8 @@
 A text difference finder.
 
 The following docker commands will build containers for this
+
+
 docker build -t difftextrewrite .
 docker run -p 59134:59134 -e ASPNETCORE_URLS="http://0.0.0.0:59134" difftextrewrite
 
