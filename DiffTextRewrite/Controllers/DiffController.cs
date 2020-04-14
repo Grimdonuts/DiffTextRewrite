@@ -43,9 +43,9 @@ namespace DiffTextRewrite.Controllers
                         string.Format("File contains a line greater than {0} characters.",
                         MaxLineLength.ToString()));
                 }
-                lines.Add(line);
+                lines.Add(line + "\r\n");
             }
-            List<string> sLF = lines;
+            string originalDoc = string.Join(" ", lines);
 
             lines = new List<string>();
             while ((line = stream2.ReadLine()) != null)
@@ -56,135 +56,82 @@ namespace DiffTextRewrite.Controllers
                         string.Format("File contains a line greater than {0} characters.",
                         MaxLineLength.ToString()));
                 }
-                lines.Add(line);
+                lines.Add(line + "\r\n");
             }
-            List<string> dLF = lines;
+            string modifiedDoc = string.Join(" ", lines);
 
-            try
+            int[,] lookupTable = new int[originalDoc.Length + 1, modifiedDoc.Length + 1];
+
+            lcsLength(originalDoc, modifiedDoc, originalDoc.Length, modifiedDoc.Length, lookupTable);
+
+            diffStrings(originalDoc, modifiedDoc, originalDoc.Length, modifiedDoc.Length, lookupTable, diffTextModel);
+
+            diffTextModel.left = string.Join("", diffTextModel.left).Replace("PIKA\rCHUPIKA\nCHU", " \r\n ")
+                .Replace("PIKA", "<span class=\"deleted\">").Replace("CHU", "</span>").Split("\r\n").ToList();
+            diffTextModel.right = string.Join("", diffTextModel.right).Replace("PIKA\rCHUPIKA\nCHU", " \r\n ")
+                .Replace("PIKA", "<span class=\"added\">").Replace("CHU", "</span>").Split("\r\n").ToList();
+
+            if (notHtml)
             {
-                for (int j = 0; j < sLF.Count; j++)
+                for (int i = 0; i < diffTextModel.left.Count; i++)
                 {
-                    var sourceLine = sLF[j];
-                    for (int k = 0; k < dLF.Count; k++)
-                    {
-                        var destLine = dLF[k];
-                        if (k == j)
-                        {
-                            if (sourceLine == destLine)
-                            {
-                                if (notHtml)
-                                {
-                                    //No Change
-                                    diffTextModel.left.Add(sourceLine + "<br>");
-                                    diffTextModel.right.Add(destLine + "<br>");
-                                }
-                                else
-                                {
-                                    //No Change
-                                    diffTextModel.left.Add(sourceLine);
-                                    diffTextModel.right.Add(destLine);
-                                }
-                            }
-                            else
-                            {
-                                //Words Logic
-                                List<string> sourceWords = sourceLine.Split(" ").ToList();
-                                List<string> destWords = destLine.Split(" ").ToList();
-                                
-                                for (int l = 0; l < sourceWords.Count; l++)
-                                {
-                                    var sourceWord = sourceWords[l];
-                                    for (int m = 0; m < destWords.Count; m++)
-                                    {
-                                        var destWord = destWords[m];
-                                        if (m == l)
-                                        {
-                                            if (sourceWord != destWord)
-                                            {
-                                                //Replace
-                                                sourceWords[l] = "<span class=\"deleted\">" + sourceWord + "</span>";
-                                                destWords[m] = "<span class=\"added\">" + destWord + "</span>";
-                                            }
-                                        }
-                                    }
-                                    if (sourceWords.Count > destWords.Count)
-                                    {
-                                        if (l > (destWords.Count - 1))
-                                        {
-                                            //Delete
-                                            sourceWords[l] = "<span class=\"deleted\">" + sourceWord + "</span>";
-                                        }
-                                    }
-                                }
-
-                                for (int l = 0; l < destWords.Count; l++)
-                                {
-                                    var destWord = destWords[l];
-                                    if (sourceWords.Count < destWords.Count)
-                                    {
-                                        if (l > (sourceWords.Count - 1))
-                                        {
-                                            //Add
-                                            destWords[l] = "<span class=\"added\">" + destWord + "</span>";
-                                        }
-                                    }
-                                }
-                                //Replace
-                                if (notHtml)
-                                {
-                                    diffTextModel.left.Add(string.Join(" ", sourceWords) + "<br>");
-                                    diffTextModel.right.Add(string.Join(" ", destWords) + "<br>");
-                                }
-                                else
-                                {
-                                    diffTextModel.left.Add(string.Join(" ", sourceWords));
-                                    diffTextModel.right.Add(string.Join(" ", destWords));
-                                }
-                            }
-                        }
-                    }
-                    if (sLF.Count > dLF.Count)
-                    {
-                        if (j > (dLF.Count - 1))
-                        {
-                            //Delete
-                            if (notHtml)
-                            {
-                                diffTextModel.left.Add("<span class=\"deleted\">" + sourceLine + "</span><br>");
-                            }
-                            else
-                            {
-                                diffTextModel.left.Add("<span class=\"deleted\">" + sourceLine + "</span>");
-                            }
-                        }
-                    }
+                    diffTextModel.left[i] = diffTextModel.left[i] + "<br>";
                 }
-
-                for (int j = 0; j < dLF.Count; j++)
+                for (int i = 0; i < diffTextModel.right.Count; i++)
                 {
-                    var destLine = dLF[j];
-                    if (sLF.Count < dLF.Count)
-                    {
-                        if (j > (sLF.Count - 1))
-                        {
-                            //Add
-                            if (notHtml)
-                            {
-                                diffTextModel.right.Add("<span class=\"added\">" + destLine + "</span><br>");
-                            }
-                            else
-                            {
-                                diffTextModel.right.Add("<span class=\"added\">" + destLine + "</span>");
-                            }
-                        }
-                    }
+                    diffTextModel.right[i] = diffTextModel.right[i] + "<br>";
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
             }
             return diffTextModel;
+        }
+
+
+        public static void diffStrings(string orig, string mod, int origLength, int modLength, int[,] lookupTable, DiffModel diffTextModel)
+        {
+            if (origLength > 0 && modLength > 0 && orig[origLength - 1] == mod[modLength - 1])
+            {
+                diffStrings(orig, mod, origLength - 1, modLength - 1, lookupTable, diffTextModel);
+                diffTextModel.right.Add(""+ mod[modLength - 1]);
+                diffTextModel.left.Add("" + orig[origLength - 1]);
+            }
+            else if (modLength > 0 && (origLength == 0 || lookupTable[origLength, modLength - 1] >= lookupTable[origLength - 1, modLength]))
+            {
+                diffStrings(orig, mod, origLength, modLength - 1, lookupTable, diffTextModel);
+                diffTextModel.right.Add("PIKA" + mod[modLength - 1] + "CHU");
+            }
+            else if (origLength > 0 && (modLength == 0 || lookupTable[origLength, modLength - 1] < lookupTable[origLength - 1, modLength]))
+            {
+                diffStrings(orig, mod, origLength - 1, modLength, lookupTable, diffTextModel);
+                diffTextModel.left.Add("PIKA" + orig[origLength - 1] + "CHU");
+            }
+        }
+
+        public static void lcsLength(string orig, string mod, int origLength, int modLength, int[,] lookupTable)
+        {
+            for (int i = 0; i <= origLength; i++)
+            {
+                lookupTable[i, 0] = 0;
+            }
+
+            for (int j = 0; j <= modLength; j++)
+            {
+                lookupTable[0, j] = 0;
+            }
+
+            for (int i = 1; i <= origLength; i++)
+            {
+                for (int j = 1; j <= modLength; j++)
+                {
+                    if (orig[i - 1] == mod[j - 1])
+                    {
+                        lookupTable[i, j] = lookupTable[i - 1, j - 1] + 1;
+                    }
+                    else
+                    {
+                        lookupTable[i, j] = Math.Max(lookupTable[i - 1, j], lookupTable[i, j - 1]);
+                    }
+                }
+            }
         }
     }
 }
