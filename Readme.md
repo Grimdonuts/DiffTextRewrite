@@ -1,5 +1,7 @@
 A text difference finder.
 
+This has its limits... and isn't ideal for files even though its set to do files.
+
 The following docker commands will build containers for this
 
 
